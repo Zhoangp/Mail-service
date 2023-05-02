@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MailServiceClient interface {
 	SendTokenVerifyAccount(ctx context.Context, in *SendTokenVerifyAccountRequest, opts ...grpc.CallOption) (*SendTokenVerifyAccountResponse, error)
+	SendTokenResetPassword(ctx context.Context, in *SendTokenResetPasswordRequest, opts ...grpc.CallOption) (*SendTokenResetPasswordResponse, error)
 }
 
 type mailServiceClient struct {
@@ -42,11 +43,21 @@ func (c *mailServiceClient) SendTokenVerifyAccount(ctx context.Context, in *Send
 	return out, nil
 }
 
+func (c *mailServiceClient) SendTokenResetPassword(ctx context.Context, in *SendTokenResetPasswordRequest, opts ...grpc.CallOption) (*SendTokenResetPasswordResponse, error) {
+	out := new(SendTokenResetPasswordResponse)
+	err := c.cc.Invoke(ctx, "/mail.MailService/SendTokenResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MailServiceServer is the server API for MailService service.
 // All implementations must embed UnimplementedMailServiceServer
 // for forward compatibility
 type MailServiceServer interface {
 	SendTokenVerifyAccount(context.Context, *SendTokenVerifyAccountRequest) (*SendTokenVerifyAccountResponse, error)
+	SendTokenResetPassword(context.Context, *SendTokenResetPasswordRequest) (*SendTokenResetPasswordResponse, error)
 	mustEmbedUnimplementedMailServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedMailServiceServer struct {
 
 func (UnimplementedMailServiceServer) SendTokenVerifyAccount(context.Context, *SendTokenVerifyAccountRequest) (*SendTokenVerifyAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendTokenVerifyAccount not implemented")
+}
+func (UnimplementedMailServiceServer) SendTokenResetPassword(context.Context, *SendTokenResetPasswordRequest) (*SendTokenResetPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendTokenResetPassword not implemented")
 }
 func (UnimplementedMailServiceServer) mustEmbedUnimplementedMailServiceServer() {}
 
@@ -88,6 +102,24 @@ func _MailService_SendTokenVerifyAccount_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MailService_SendTokenResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendTokenResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailServiceServer).SendTokenResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mail.MailService/SendTokenResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailServiceServer).SendTokenResetPassword(ctx, req.(*SendTokenResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MailService_ServiceDesc is the grpc.ServiceDesc for MailService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var MailService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendTokenVerifyAccount",
 			Handler:    _MailService_SendTokenVerifyAccount_Handler,
+		},
+		{
+			MethodName: "SendTokenResetPassword",
+			Handler:    _MailService_SendTokenResetPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

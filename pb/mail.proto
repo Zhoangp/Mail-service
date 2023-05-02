@@ -4,6 +4,7 @@ option go_package = "github.com/Zhoangp/Mail-service/pb";
 
 service MailService {
   rpc SendTokenVerifyAccount(SendTokenVerifyAccountRequest) returns(SendTokenVerifyAccountResponse);
+  rpc SendTokenResetPassword(SendTokenResetPasswordRequest) returns(SendTokenResetPasswordResponse);
 }
 message Mail {
   string destMail = 1;
@@ -17,6 +18,13 @@ message SendTokenVerifyAccountRequest {
 }
 message SendTokenVerifyAccountResponse {
   ErrorResponse error = 1;
+}
+message SendTokenResetPasswordRequest {
+  Mail mail = 1;
+}
+message SendTokenResetPasswordResponse {
+  ErrorResponse error = 1;
+
 }
 message ErrorResponse {
   int64 code = 1;
