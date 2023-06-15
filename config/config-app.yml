@@ -1,7 +1,7 @@
 service:
   Version: 1.0.0
   Mode: development
-  port: 50051
+  port: 4001
   Secret: go-courses
   ActiveTokenExpired: 1
   AccessTokenExpiredIn: 24
